@@ -55,7 +55,18 @@ async function runBatchFileInTerminal(file: vscode.Uri, args: string[] = []): Pr
     const filepath = file.fsPath;
     const workingDirectory = path.dirname(filepath);
 
-    const command = `cls & cd "${workingDirectory}" & "${filepath}" ${args.join(" ")}`;
+    const command = `cls & cd /d "${workingDirectory}" & "${filepath}" ${args.join(" ")}`;
+    /**
+     * Adds "/d" argument to cd. It seems that this was an accidental omission as is it present on line 94
+     * 
+     * ALTERNATIVE:
+     */    const commandAlternative = `cls & pushd "${workingDirectory}" & "${filepath}" ${args.join(" ")} & popd`;
+    /** This is an alternative using the commands pushd and popd.
+     * It changes the current directory to the directory that contains the script to be run, runs the script,
+     * and then changes the current directory back to the original directory after the script finishes.
+     * Todo: Apply this approach at line 94 below.
+     */
+
     terminal.sendText(command, true);
     terminal.show();
 
